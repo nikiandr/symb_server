@@ -1,6 +1,5 @@
 import socket
 from datetime import datetime
-from mpmath.functions.functions import re
 from sympy import symbols, diff, integrate
 
 
