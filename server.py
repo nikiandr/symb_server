@@ -1,5 +1,6 @@
 import socket
 from datetime import datetime
+from mpmath.functions.functions import re
 from sympy import symbols, diff, integrate
 
 
@@ -14,19 +15,21 @@ class SymServer():
         server.listen(2)  # only 5 possible connection requests
         print(f"SymServer started at {self.ip}:" +
               f"{self.port} on {datetime.now()}")
+        client, address = server.accept()
+        print(f"Sucessfull connection from {address}")
         try:
             while True:
-                client, address = server.accept()
-                print(f"Sucessfull connection from {address}")
                 data = client.recv(1024).decode('ascii')
                 if data:
                     print(f"Message recieved: {data}")
                     x = symbols('x')
                     req = data.split(" ", 1)
-                    if req[0] == 'differentiate':
-                        res = str(diff(req[1], x))
+                    if len(req) == 1:
+                        res = "Unappropriate request"
+                    elif req[0] == 'differentiate':
+                        res = str(diff(req[1], x).doit())
                     elif req[0] == 'integrate':
-                        res = str(integrate(req[1], x))
+                        res = str(integrate(req[1], x).doit())
                     else:
                         res = "Unappropriate request"
                     client.send(res.encode('ascii'))
@@ -37,5 +40,5 @@ class SymServer():
 
 
 if __name__ == '__main__':
-    server = SymServer("localhost", 4446)
+    server = SymServer("localhost", 6666)
     server.start()
