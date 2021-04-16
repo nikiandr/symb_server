@@ -47,3 +47,9 @@
     'mode': 'simplify',  # or any other mode from request
     'description': 'Some shitty error'
 }
+
+{
+    'type': 'success',
+    'mode': 'simplify',  # or any other mode from request
+    'result': '2'
+}
