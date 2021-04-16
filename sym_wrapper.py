@@ -1,5 +1,4 @@
 from sympy import symbols, diff, integrate
-import json
 
 
 # json_try = {
@@ -12,7 +11,10 @@ import json
 
 
 def parse_derivative(data):
-    return 'derivative'
+    func = data["function"]
+    for d in data["order"]:
+        func = diff(func, d)
+    return str(func.doit())
 
 
 def parse_indef_integral(data):

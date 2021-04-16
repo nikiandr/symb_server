@@ -1,6 +1,6 @@
 import socket
 from datetime import datetime
-from sympy import symbols, diff, integrate
+# from sympy import symbols, diff, integrate
 import sym_wrapper as sw
 import json
 
@@ -24,16 +24,6 @@ class SymServer():
                 if data:
                     print(f"Message recieved: {data}")
                     data = json.loads(data)
-                    # x = symbols('x')
-                    # req = data.split(" ", 1)
-                    # if len(req) == 1:
-                    #     res = "Unappropriate request"
-                    # elif req[0] == 'differentiate':
-                    #     res = str(diff(req[1], x).doit())
-                    # elif req[0] == 'integrate':
-                    #     res = str(integrate(req[1], x).doit())
-                    # else:
-                    #     res = "Unappropriate request"
                     res = sw.parse_req(data)
                     client.send(res.encode('ascii'))
                     print("Response sent")
