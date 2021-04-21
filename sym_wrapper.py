@@ -14,7 +14,9 @@ def parse_derivative(data):
     func = data["function"]
     for d in data["order"]:
         func = diff(func, d)
-    return str(func.doit())
+    return {'type': 'success',
+            'mode': 'derivative',  # or any other mode from request
+            'result': str(func.doit())}
 
 
 def parse_indef_integral(data):
@@ -33,7 +35,7 @@ def parse_fs(data):
     return None
 
 
-def parse_req(data):
+def parse_request(data):
     result = ""
     if data['mode'] == 'derivative':
         result = parse_derivative(data)
@@ -46,5 +48,7 @@ def parse_req(data):
     elif data['mode'] == 'fourier_series':
         result = parse_fs(data)
     else:
-        result = "Error"
+        result = {'type': 'error',
+                  'mode': data['mode'],
+                  'description': 'Unknown mode'}
     return result

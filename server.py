@@ -1,31 +1,30 @@
 import socket
 from datetime import datetime
-# from sympy import symbols, diff, integrate
 import sym_wrapper as sw
 import json
 
 
-class SymServer():
+class SymServer:
     def __init__(self, ip, port):
         self.ip = ip
         self.port = port
+        self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
     def start(self):
-        server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        server.bind((self.ip, self.port))
-        server.listen(2)  # only 5 possible connection requests
+        self.server.bind((self.ip, self.port))
+        self.server.listen(1)  # only 2 possible connection requests
         print(f"SymServer started at {self.ip}:" +
               f"{self.port} on {datetime.now()}")
-        client, address = server.accept()
-        print(f"Sucessfull connection from {address}")
+        client, address = self.server.accept()
+        print(f"Successful connection from {address}")
         try:
             while True:
                 data = client.recv(1024).decode('ascii')
                 if data:
-                    print(f"Message recieved: {data}")
+                    print(f"Message received: {data}")
                     data = json.loads(data)
-                    res = sw.parse_req(data)
-                    client.send(res.encode('ascii'))
+                    res = sw.parse_request(data)
+                    client.send(json.dumps(res).encode('ascii'))
                     print("Response sent")
         except KeyboardInterrupt:
             pass
@@ -33,5 +32,5 @@ class SymServer():
 
 
 if __name__ == '__main__':
-    server = SymServer("localhost", 55)
-    server.start()
+    sv = SymServer("localhost", 56)
+    sv.start()

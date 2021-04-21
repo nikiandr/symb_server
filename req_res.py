@@ -2,7 +2,6 @@
 
 {
     'mode': 'derivative',
-    'variables': ['x'],
     'function': 'x**2',
     'order': ['x']  # 'order': ['x', 'x']
 }
