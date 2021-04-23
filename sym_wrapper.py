@@ -1,30 +1,27 @@
 from sympy import symbols, diff, integrate
 
 
-# json_try = {
-#     'mode': 'derivative',
-#     'variables': ['x'],
-#     'function': 'x**2',
-#     'order': ['x']  # 'order': ['x', 'x']
-# }
-# print(json.loads(json.dumps(json_try)))
-
-
 def parse_derivative(data):
     func = data["function"]
     for d in data["order"]:
         func = diff(func, d)
     return {'type': 'success',
-            'mode': 'derivative',  # or any other mode from request
+            'mode': 'derivative',
             'result': str(func.doit())}
 
 
 def parse_indef_integral(data):
-    return None
+    return {'type': 'success',
+            'mode': 'indef_integral',
+            'result': str(integrate(data["function"], data["variables"]).doit())}
 
 
 def parse_def_integral(data):
-    return None
+    return {'type': 'success',
+            'mode': 'indef_integral',
+            'result': str(integrate(data["function"], (data["variables"][0],
+                                                       data["interval"][0],
+                                                       data["interval"][1])).doit())}
 
 
 def parse_simplify(data):
@@ -52,3 +49,4 @@ def parse_request(data):
                   'mode': data['mode'],
                   'description': 'Unknown mode'}
     return result
+

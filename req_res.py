@@ -8,7 +8,6 @@
 
 {
     'mode': 'derivative',
-    'variables': ['x', 'y', 'z'],
     'function': 'x**2 + y**2 + z**2',
     'order': ['x', 'x', 'y', 'z']  # d^4 f / d^2 x dy dz
 }

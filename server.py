@@ -32,5 +32,5 @@ class SymServer:
 
 
 if __name__ == '__main__':
-    sv = SymServer("localhost", 56)
+    sv = SymServer("localhost", 42)
     sv.start()
