@@ -18,7 +18,7 @@ class SymClient:
 
 
 if __name__ == '__main__':
-    cl = SymClient("localhost", 42)
+    cl = SymClient("172.17.0.2", 42)
     cl.start()
     try:
         while True:
