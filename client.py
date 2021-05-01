@@ -52,12 +52,14 @@ if __name__ == '__main__':
                             'function': func,
                             'interval': integral_interval}
             elif command_type == 'simplify':
-                pass
-            elif command_type == 'fourier_series':
-                pass
+                print("Enter expression: ", end="")
+                func = str(input())
+                req_data = {'mode': 'simplify',
+                            'expression': func}
             else:
-                pass
+                print("Mode doesn't exist")
+                continue
             res = cl.send_request(req_data)['result']
             print(res)
     except KeyboardInterrupt:
-        pass
+        print("Client stopped")

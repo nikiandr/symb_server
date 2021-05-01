@@ -1,39 +1,62 @@
-from sympy import symbols, diff, integrate
+from sympy import symbols, diff, integrate, simplify
 
 
 def parse_derivative(data):
-    func = data["function"]
-    for d in data["order"]:
-        func = diff(func, d)
-    return {'type': 'success',
-            'mode': 'derivative',
-            'result': str(func.doit())}
+    try:
+        func = data["function"]
+        for d in data["order"]:
+            func = diff(func, d)
+        res = {'type': 'success',
+               'mode': 'derivative',
+               'result': str(func.doit())}
+    except ValueError as e:
+        res = {'type': 'error',
+               'mode': 'derivative',
+               'result': str(e)}
+    return res
 
 
 def parse_indef_integral(data):
-    return {'type': 'success',
-            'mode': 'indef_integral',
-            'result': str(integrate(data["function"], data["variables"]).doit())}
+    try:
+        res = {'type': 'success',
+               'mode': 'indef_integral',
+               'result': str(integrate(data["function"], data["variables"]).doit())}
+    except ValueError as e:
+        res = {'type': 'error',
+               'mode': 'indef_integral',
+               'result': str(e)}
+    return res
 
 
 def parse_def_integral(data):
-    return {'type': 'success',
-            'mode': 'indef_integral',
-            'result': str(integrate(data["function"], (data["variables"][0],
-                                                       data["interval"][0],
-                                                       data["interval"][1])).doit())}
+    try:
+        res = {'type': 'success',
+               'mode': 'def_integral',
+               'result': str(integrate(data["function"], (data["variables"][0],
+                                                          data["interval"][0],
+                                                          data["interval"][1])).doit())}
+    except ValueError as e:
+        res = {'type': 'error',
+               'mode': 'def_integral',
+               'result': str(e)}
+    return res
 
 
 def parse_simplify(data):
-    return None
-
-
-def parse_fs(data):
-    return None
+    try:
+        res = {
+               'type': 'success',
+               'mode': 'simplify',  # or any other mode from request
+               'result': str(simplify(data["expression"], doit=True))
+              }
+    except ValueError as e:
+        res = {'type': 'error',
+               'mode': 'simplify',
+               'result': str(e)}
+    return res
 
 
 def parse_request(data):
-    result = ""
     if data['mode'] == 'derivative':
         result = parse_derivative(data)
     elif data['mode'] == 'indef_integral':
@@ -42,11 +65,9 @@ def parse_request(data):
         result = parse_def_integral(data)
     elif data['mode'] == 'simplify':
         result = parse_simplify(data)
-    elif data['mode'] == 'fourier_series':
-        result = parse_fs(data)
     else:
         result = {'type': 'error',
                   'mode': data['mode'],
-                  'description': 'Unknown mode'}
+                  'result': 'Unknown mode'}
     return result
 

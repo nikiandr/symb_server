@@ -27,7 +27,6 @@
 
 {
     'mode': 'simplify',
-    'variables': ['x', 'y'],
     'expression': 'sin(x)**2 + cos(x)**2 + sin(y)**2 + cos(y)**2',
 }
 
@@ -43,7 +42,7 @@
 {
     'type': 'error',
     'mode': 'simplify',  # or any other mode from request
-    'description': 'Some shitty error'
+    'result': 'Some shitty error'
 }
 
 {
