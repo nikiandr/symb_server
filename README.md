@@ -38,5 +38,5 @@ docker build -t symb_server .
 Then you can run built container image using:
 
 ```bash
-docker run --name <any_name> --net=host -it symb_server:latest
+docker run --name ss --net=host -it symb_server:latest
 ```
