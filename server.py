@@ -2,6 +2,7 @@ import socket
 from datetime import datetime
 import sym_wrapper as sw
 import json
+import os
 
 
 class SymServer:
@@ -32,5 +33,9 @@ class SymServer:
 
 
 if __name__ == '__main__':
-    sv = SymServer("localhost", 42)
+    # if os.getenv('HNAME'):
+    #     sv = SymServer(os.getenv('HNAME'), 42)
+    # else:
+    #     sv = SymServer(socket.gethostname(), 42)
+    sv = SymServer('localhost', 42)
     sv.start()
