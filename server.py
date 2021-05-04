@@ -2,7 +2,6 @@ import socket
 from datetime import datetime
 import sym_wrapper as sw
 import json
-import os
 
 
 class SymServer:
