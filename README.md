@@ -28,7 +28,9 @@ sudo python3 client.py
 
 ## Run using container
 
-Project folder contains Dockerfile which can be used to build and run containerized version of server app.
+All the commands should be run from the respective folder.
+
+`server` folder contains Dockerfile which can be used to build and run containerized version of server app.
 
 First of all you need to build Docker image from Dockerfile by using in project directory:
 
@@ -38,5 +40,20 @@ docker build -t symb_server .
 Then you can run built container image using:
 
 ```bash
-docker run --name ss --net=host -it symb_server:latest
+docker run --name sserver --net=host -it symb_server:latest
+```
+
+It works absolutely the same way with client application.
+
+`client` folder contains Dockerfile which can be used to build and run containerized version of client app.
+
+First of all you need to build Docker image from Dockerfile by using in project directory:
+
+```bash
+docker build -t symb_client .
+```
+Then you can run built container image using:
+
+```bash
+docker run --name sclient --net=host -it symb_cliwnt:latest
 ```
