@@ -40,7 +40,7 @@ class SymServer:
             if qans == 'y':
                 try_connect = True
             elif qans == 'n':
-                try_connect = True
+                try_connect = False
         client.close()
 
 
@@ -49,5 +49,5 @@ if __name__ == '__main__':
     #     sv = SymServer(os.getenv('HNAME'), 42)
     # else:
     #     sv = SymServer(socket.gethostname(), 42)
-    sv = SymServer('localhost', 45)
+    sv = SymServer('localhost', 50)
     sv.start()

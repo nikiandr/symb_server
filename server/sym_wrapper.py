@@ -1,4 +1,4 @@
-from sympy import symbols, diff, integrate, simplify
+from sympy import diff, integrate, simplify
 
 
 def parse_derivative(data):
@@ -20,7 +20,9 @@ def parse_indef_integral(data):
     try:
         res = {'type': 'success',
                'mode': 'indef_integral',
-               'result': str(integrate(data["function"], data["variables"]).doit())}
+               'result': str(integrate(data["function"],
+                                       data["variables"])
+                             .doit())}
     except ValueError as e:
         res = {'type': 'error',
                'mode': 'indef_integral',
@@ -34,7 +36,8 @@ def parse_def_integral(data):
                'mode': 'def_integral',
                'result': str(integrate(data["function"], (data["variables"][0],
                                                           data["interval"][0],
-                                                          data["interval"][1])).doit())}
+                                                          data["interval"][1]))
+                             .doit())}
     except ValueError as e:
         res = {'type': 'error',
                'mode': 'def_integral',
@@ -70,4 +73,3 @@ def parse_request(data):
                   'mode': data['mode'],
                   'result': 'Unknown mode'}
     return result
-
