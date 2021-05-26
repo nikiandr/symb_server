@@ -11,14 +11,14 @@ class SymClient:
     def start(self):
         self.server.connect((self.ip, self.port))
 
-    def send_request(self, data):
-        self.server.send(json.dumps(data).encode('ascii'))
+    def request_answer(self, data):
+        self.server.sendall(json.dumps(data).encode('ascii'))
         result = json.loads(self.server.recv(1024).decode('ascii'))
         return result
 
 
 if __name__ == '__main__':
-    cl = SymClient("localhost", 42)
+    cl = SymClient("localhost", 45)
     cl.start()
     try:
         while True:
@@ -59,7 +59,7 @@ if __name__ == '__main__':
             else:
                 print("Mode doesn't exist")
                 continue
-            res = cl.send_request(req_data)['result']
+            res = cl.request_answer(req_data)['result']
             print(res)
     except KeyboardInterrupt:
         print("Client stopped")
