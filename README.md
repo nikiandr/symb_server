@@ -55,5 +55,32 @@ docker build -t symb_client .
 Then you can run built container image using:
 
 ```bash
-docker run --name sclient --net=host -it symb_cliwnt:latest
+docker run --name sclient --net=host -it symb_client:latest
 ```
+
+## Usage guide
+
+### Server
+
+Server in process of running will print you some information about its work process such as info about:
+- start of server (IPv4, port, time of start)
+- connection to the server
+- recieved message
+- sent message to client
+- availability for new connection
+
+***pic1***
+
+### Client
+
+Client application is fully text/CLI-based.
+
+To use client app appropriately first of all you should choose mode. Mode 
+can be chosen in each request to the app separately.
+By now there are 4 modes:
+
+|Mode name|Mode description|
+|---|---|
+|   |   |
+|   |   |
+|   |   |

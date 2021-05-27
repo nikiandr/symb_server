@@ -60,16 +60,21 @@ def parse_simplify(data):
 
 
 def parse_request(data):
-    if data['mode'] == 'derivative':
-        result = parse_derivative(data)
-    elif data['mode'] == 'indef_integral':
-        result = parse_indef_integral(data)
-    elif data['mode'] == 'def_integral':
-        result = parse_def_integral(data)
-    elif data['mode'] == 'simplify':
-        result = parse_simplify(data)
-    else:
+    try:
+        if data['mode'] == 'derivative':
+            result = parse_derivative(data)
+        elif data['mode'] == 'indef_integral':
+            result = parse_indef_integral(data)
+        elif data['mode'] == 'def_integral':
+            result = parse_def_integral(data)
+        elif data['mode'] == 'simplify':
+            result = parse_simplify(data)
+        else:
+            result = {'type': 'error',
+                      'mode': data['mode'],
+                      'result': 'Unknown mode'}
+    except Exception as e:
         result = {'type': 'error',
                   'mode': data['mode'],
-                  'result': 'Unknown mode'}
+                  'result': str(e)}
     return result
