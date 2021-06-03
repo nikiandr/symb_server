@@ -69,10 +69,6 @@ def parse_request(data):
             result = parse_def_integral(data)
         elif data['mode'] == 'simplify':
             result = parse_simplify(data)
-        else:
-            result = {'type': 'error',
-                      'mode': data['mode'],
-                      'result': 'Unknown mode'}
     except Exception as e:
         result = {'type': 'error',
                   'mode': data['mode'],

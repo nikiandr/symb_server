@@ -30,13 +30,6 @@
     'expression': 'sin(x)**2 + cos(x)**2 + sin(y)**2 + cos(y)**2',
 }
 
-{
-    'mode': 'fourier_series',
-    'variables': ['x'],
-    'function': 'sin(x)',
-    'interval': ('-pi', 'pi')
-}
-
 # Types of response
 
 {
@@ -49,4 +42,12 @@
     'type': 'success',
     'mode': 'simplify',  # or any other mode from request
     'result': '2'
+}
+
+# Types of progress message
+
+{
+    'type': 'progress',
+    'mode': 'simplify',
+    'result': 'Progress 90/100'
 }
