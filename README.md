@@ -62,7 +62,7 @@ docker run --name sclient --net=host -it symb_client:latest
 
 ### Server
 
-Server in process of running will print you some information about its work process such as info about:
+Server will print you some information about its work process such as info about:
 - start of server (IPv4, port, time of start)
 - connection to the server
 - recieved message
