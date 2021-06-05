@@ -34,6 +34,7 @@ class SymServer:
                               f"{len(json.dumps(res).encode('ascii'))} bytes")
                 except KeyboardInterrupt:
                     print("\nServer stopped")
+                    client.close()
                     break
                 print("Do you want to wait for another connection? (y/n):",
                       end=' ')
@@ -44,7 +45,6 @@ class SymServer:
                     try_connect = False
         except KeyboardInterrupt:
             print("\nServer stopped")
-        client.close()
 
 
 if __name__ == '__main__':

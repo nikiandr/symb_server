@@ -35,7 +35,7 @@ All the commands should be run from the respective folder.
 First of all you need to build Docker image from Dockerfile by using in project directory:
 
 ```bash
-docker build -t symb_server .
+docker build -t symb_server -f Dockerfile.server .
 ```
 Then you can run built container image using:
 
@@ -50,7 +50,7 @@ It works absolutely the same way with client application.
 First of all you need to build Docker image from Dockerfile by using in project directory:
 
 ```bash
-docker build -t symb_client .
+docker build -t symb_client -f Dockerfile.client .
 ```
 Then you can run built container image using:
 
@@ -68,8 +68,6 @@ Server in process of running will print you some information about its work proc
 - recieved message
 - sent message to client
 - availability for new connection
-
-***pic1***
 
 ### Client
 
