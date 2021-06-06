@@ -1,8 +1,22 @@
 import socket
 from datetime import datetime
 import sym_wrapper as sw
-import json
 import catp as cp
+import threading as td
+
+
+def process_messages(client):
+    while True:
+        data = client.recv(260)
+        if not data:
+            break
+        print(f"Message received: {data}")
+        ec = cp.CATP()
+        res = sw.parse_request(ec.decode(data))
+        response = ec.encode(res)
+        client.sendall(response)
+        print(f"Response sent: " +
+              f"{len(response)} bytes")
 
 
 class SymServer:
@@ -13,37 +27,18 @@ class SymServer:
 
     def start(self):
         self.server.bind((self.ip, self.port))
-        self.server.listen(1)  # only 2 possible connection requests
+        self.server.listen(5)  # only 5 possible connection requests
         print(f"SymServer started at {self.ip}:" +
               f"{self.port} on {datetime.now()}")
-        try_connect = True
+        connection_number = 0
         try:
-            while try_connect:
-                print("Waiting for connection")
+            while True:
+                print("Waiting for another connection")
                 client, address = self.server.accept()
                 print(f"Successful connection from {address[0]}")
-                try:
-                    while True:
-                        data = client.recv(260)
-                        if not data:
-                            break
-                        print(f"Message received: {data}")
-                        ec = cp.CATP()
-                        res = sw.parse_request(ec.decode(data))
-                        client.sendall(ec.encode(res))
-                        print(f"Response sent: " +
-                              f"{len(json.dumps(res).encode('ascii'))} bytes")
-                except KeyboardInterrupt:
-                    print("\nServer stopped")
-                    client.close()
-                    break
-                print("Do you want to wait for another connection? (y/n):",
-                      end=' ')
-                qans = str(input()).lower()
-                if qans == 'y':
-                    try_connect = True
-                elif qans == 'n':
-                    try_connect = False
+                process_thread = td.Thread(target=process_messages, args=(client, ))
+                process_thread.start()
+                connection_number += 1
         except KeyboardInterrupt:
             print("\nServer stopped")
 

@@ -67,7 +67,7 @@ docker run --name sclient --net=host -it symb_client:latest
 Server will print you some information about its work process such as info about:
 - start of server (IPv4, port, time of start)
 - connection to the server
-- recieved message
+- received message
 - sent message to client
 - availability for new connection
 
@@ -79,8 +79,11 @@ To use client app appropriately first of all you should choose mode. Mode
 can be chosen in each request to the app separately.
 By now there are 4 modes:
 
-|Mode name|Mode description|
-|---|---|
-|   |   |
-|   |   |
-|   |   |
+|  Packet mode   | Description                                                  |
+| :------------: | :----------------------------------------------------------- |
+|   derivative   | Computation of derivative or partial derivative of any order of specific function |
+|  def_integral  | Computation of definite integral on the interval of function |
+| indef_integral | Computation of indefinite integral of function               |
+|    simplify    | Simplification of expression                                 |
+
+After choosing method you should basically follow the instructions and that's all.
