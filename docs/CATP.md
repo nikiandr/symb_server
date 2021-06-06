@@ -1,4 +1,4 @@
-# CATP (Computer algebra transfer protocol)
+# CATP (Computer algebra transfer protocol) v0.0.1
 ## Description
 
 CATP or Computer algebra transfer protocol is a network protocol is application level protocol 
@@ -9,14 +9,45 @@ SymbServer or WolframAlpha.
 
 ## Packet structure
 
-CATP packet consists of two parts: header (first 4 bytes of packet) and content.
+CATP packet consists of two parts: header (first 4 bytes of packet) and content (all the bytes after the first 4).
 
 ### Header
 
 First byte of the packet corresponds to the type of packet. There are three possible modes:
 
-| Packet type |      |      |
-| :---------- | :--: | :--: |
-|             |      |      |
-|             |      |      |
-|             |      |      |
+| Packet type            | Corresponding first byte of header | Description                                                  |
+| :--------------------- | :--------------------------------: | :----------------------------------------------------------- |
+| Computational request  |                 0                  | Packet of this type contains information on which computations should be performed and object on which they should be performed |
+| Computational response |                 1                  | Packet of this type contains response to computational request in form of object - result of operation performed or error message |
+| Progress packet        |                 2                  | Contains information about progress of the last computational request |
+
+Second byte contains length of content in bytes for the ease of parsing and decoding packet as well as informational purposes.
+
+Third byte contains information about mode of the packet. Mode is basically type of computations which will be performed/in progress/done. Modes we have in this version of protocol are specific to SymbServer and can be remade to be relevant for other computer algebra client-server applications. In this version there are 4 modes:
+
+|  Packet mode   | Corresponding second byte of header | Description                                                  |
+| :------------: | :---------------------------------: | :----------------------------------------------------------- |
+|   derivative   |                  0                  | Computation of derivative or partial derivative of any order of specific function |
+|  def_integral  |                  1                  | Computation of definite integral on the interval of function |
+| indef_integral |                  2                  | Computation of indefinite integral of function               |
+|    simplify    |                  3                  | Simplification of expression                                 |
+
+Fourth byte can contain only 2 values: 0 and 1.  0 corresponds to success, 1 - to error. These byte is mostly used in computational response type of packets to mark successful and unsuccessful operations.
+
+### Content
+
+As a standard ASCII should be used to encode and decode content part of packet. 
+
+Content of the packet depends on type and mode of request:
+
+| Packet type            | Packet mode    | Content form                 | Remarks                                                      |
+| ---------------------- | -------------- | ---------------------------- | ------------------------------------------------------------ |
+| Computational request  | derivative     | function\|derivative order   | Derivative order consists of variables names divided by vertical bar symbol. E.g. to find second order derivative of function with respect to **x** variable derivative order should look like this: **x\|x** |
+| Computational request  | def_integral   | function\|variable\|interval | Integration interval should contain two numbers or expressions which can be calculated to numbers divided by space (' ') e.g. **pi 2\*pi** |
+| Computational request  | indef_integral | function\|variable           | Content has the same structure as in def_integral mode but without the interval |
+| Computational request  | simplify       | expression                   | No need of any special symbols, just expression you want to simplify |
+| Computational response | Any            | result                       | Content will contain result of computation. It can be either resulting object or error message. |
+| Progress packet        | Any            | progress string              | Content basically has encoded string with information about progress of operation |
+
+Vertical bar symbol (|, ASCII code 124) is widely used in content part of packet to split different parts of content.
+

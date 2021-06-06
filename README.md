@@ -6,6 +6,8 @@ All recipes for running app are for Linux based OS.
 
 Developed on Ubuntu 20.04 using Python 3.8.5 and Docker version 20.10.6, build 370c289.
 
+SymbServer uses [CATP protocol](docs/CATP.md) to transfer information through TCP connection.
+
 ## Run locally
 
 Python 3 should be installed to use both client and server part of app.
