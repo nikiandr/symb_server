@@ -7,5 +7,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY server.py ./
 COPY sym_wrapper.py ./
+COPY catp.py ./
 
 CMD [ "python", "./server.py" ]

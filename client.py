@@ -1,5 +1,5 @@
 import socket
-import json
+import catp as cp
 
 
 class SymClient:
@@ -12,8 +12,9 @@ class SymClient:
         self.server.connect((self.ip, self.port))
 
     def request_answer(self, data):
-        self.server.sendall(json.dumps(data).encode('ascii'))
-        result = json.loads(self.server.recv(1024).decode('ascii'))
+        ec = cp.CATP()
+        self.server.sendall(ec.encode(data))
+        result = ec.decode(self.server.recv(260))
         return result
 
 

@@ -2,6 +2,7 @@ import socket
 from datetime import datetime
 import sym_wrapper as sw
 import json
+import catp as cp
 
 
 class SymServer:
@@ -23,13 +24,13 @@ class SymServer:
                 print(f"Successful connection from {address[0]}")
                 try:
                     while True:
-                        data = client.recv(1024).decode('ascii')
+                        data = client.recv(260)
                         if not data:
                             break
                         print(f"Message received: {data}")
-                        data = json.loads(data)
-                        res = sw.parse_request(data)
-                        client.sendall(json.dumps(res).encode('ascii'))
+                        ec = cp.CATP()
+                        res = sw.parse_request(ec.decode(data))
+                        client.sendall(ec.encode(res))
                         print(f"Response sent: " +
                               f"{len(json.dumps(res).encode('ascii'))} bytes")
                 except KeyboardInterrupt:
