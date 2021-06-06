@@ -61,6 +61,8 @@ if __name__ == '__main__':
                 print("Mode doesn't exist")
                 continue
             res = cl.request_answer(req_data)['result']
+            if not res:
+                break
             print(res)
     except KeyboardInterrupt:
-        print("Client stopped")
+        print("\nClient stopped")
