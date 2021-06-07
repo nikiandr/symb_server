@@ -37,27 +37,12 @@ All the commands should be run from the respective folder.
 First of all you need to build Docker image from Dockerfile by using in project directory:
 
 ```bash
-docker build -t symb_server -f Dockerfile.server .
+docker build -t symb_server .
 ```
 Then you can run built container image using:
 
 ```bash
-docker run --name sserver --net=host -it symb_server:latest
-```
-
-It works absolutely the same way with client application.
-
-`client` folder contains Dockerfile which can be used to build and run containerized version of client app.
-
-First of all you need to build Docker image from Dockerfile by using in project directory:
-
-```bash
-docker build -t symb_client -f Dockerfile.client .
-```
-Then you can run built container image using:
-
-```bash
-docker run --name sclient --net=host -it symb_client:latest
+docker run --name sserver -p 50:50 -it symb_server:latest
 ```
 
 ## Usage guide
@@ -75,7 +60,7 @@ Server will print you some information about its work process such as info about
 
 Client application is fully text/CLI-based.
 
-To use client app appropriately first of all you should choose mode. Mode 
+To use client app appropriately first you should choose mode. Mode 
 can be chosen in each request to the app separately.
 By now there are 4 modes:
 

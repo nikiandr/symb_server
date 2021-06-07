@@ -19,8 +19,9 @@ class SymClient:
 
 
 if __name__ == '__main__':
-    cl = SymClient("localhost", 50)
+    cl = SymClient("localhost", 8888)
     cl.start()
+    ec = cp.CATP()
     try:
         while True:
             print("Enter type of command: ", end="")
@@ -28,7 +29,7 @@ if __name__ == '__main__':
             if command_type == "derivative":
                 print("Enter function: ", end="")
                 func = str(input())
-                print("Enter derivative order: ", end="")
+                print("Enter derivative order (variable names parted with space): ", end="")
                 derivative_order = str(input()).split(sep=" ")
                 req_data = {'mode': 'derivative',
                             'function': func,
@@ -60,9 +61,14 @@ if __name__ == '__main__':
             else:
                 print("Mode doesn't exist")
                 continue
-            res = cl.request_answer(req_data)['result']
-            if not res:
-                break
-            print(res)
+            cl.server.sendall(ec.encode(req_data))
+            wait_for_result = True
+            while wait_for_result:
+                result = ec.decode(cl.server.recv(260))
+                if not result:
+                    break
+                elif result['type'] == 'success' or result['type'] == 'error':
+                    wait_for_result = False
+                print(result['result'])
     except KeyboardInterrupt:
         print("\nClient stopped")
