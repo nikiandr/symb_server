@@ -44,9 +44,6 @@ class SymServer:
 
 
 if __name__ == '__main__':
-    # if os.getenv('HNAME'):
-    #     sv = SymServer(os.getenv('HNAME'), 42)
-    # else:
-    #     sv = SymServer(socket.gethostname(), 42)
-    sv = SymServer('localhost', 50)
+    # 0.0.0.0 - basically any address
+    sv = SymServer('0.0.0.0', 50)
     sv.start()
