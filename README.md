@@ -42,7 +42,7 @@ docker build -t symb_server .
 Then you can run built container image using:
 
 ```bash
-docker run --name sserver --net=host -it symb_server:latest
+docker run --name sserver -p 50:50 -it symb_server:latest
 ```
 
 ## Usage guide
@@ -60,7 +60,7 @@ Server will print you some information about its work process such as info about
 
 Client application is fully text/CLI-based.
 
-To use client app appropriately first of all you should choose mode. Mode 
+To use client app appropriately first you should choose mode. Mode 
 can be chosen in each request to the app separately.
 By now there are 4 modes:
 
