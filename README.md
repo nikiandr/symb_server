@@ -26,6 +26,13 @@ sudo python3 server.py
 ```bash
 sudo python3 client.py
 ```
+
+You can also choose port which server uses to connect to it using command line argument.
+
+```bash
+sudo python3 client.py <port>
+```
+where <port> - port which is used by server.
 ***SUDO IS NECESSARY***
 
 ## Run using container
@@ -41,9 +48,10 @@ docker build -t symb_server .
 Then you can run built container image using:
 
 ```bash
-docker run --name sserver -p 50:50 -it symb_server:latest
+docker run --name sserver -p <port>:50 -it symb_server:latest
 ```
-
+where <port> - port which you want to be used by SymbServer
+ 
 ## Usage guide
 
 ### Server
