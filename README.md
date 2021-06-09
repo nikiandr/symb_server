@@ -32,7 +32,6 @@ sudo python3 client.py
 
 All the commands should be run from the respective folder.
 
-`server` folder contains Dockerfile which can be used to build and run containerized version of server app.
 
 First of all you need to build Docker image from Dockerfile by using in project directory:
 
