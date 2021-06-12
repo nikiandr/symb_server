@@ -12,5 +12,5 @@ SymbServer or WolframAlpha.
 | Version | Progress    | Changes                                                      | Documentation                 |
 | ------- | ----------- | ------------------------------------------------------------ | ----------------------------- |
 | v0.0.1  | Completed   | Created basic protocol                                       | [Documentation](catp/v001.md) |
-| v0.0.2  | In Progress | Third byte with content length deleted from header; http-like packet ending: <CR><LF> (that is, a [carriage return](https://en.wikipedia.org/wiki/Carriage_return) character followed by a [line feed](https://en.wikipedia.org/wiki/Line_feed) character); packet types for authentication and history; no bounds on packet length. | [Documentation](catp/v002.md) |
+| v0.0.2  | In Progress | Second byte with content length deleted from header; http-like packet ending: <CR><LF> (that is, a [carriage return](https://en.wikipedia.org/wiki/Carriage_return) character followed by a [line feed](https://en.wikipedia.org/wiki/Line_feed) character); packet types for authentication and history; no bounds on packet length. | [Documentation](catp/v002.md) |
 
