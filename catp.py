@@ -111,8 +111,140 @@ class CATP:
                     }
             else:
                 raise ValueError("Unacceptable package")
+        elif self.version == '0.0.2':
+            packet_type = packet[0]
+            packet_mode = packet[1]
+            packet_success = packet[2]
+            # split - to get rid of end delimiter and everything after it
+            content = packet[2:].split(b'\r\n\r\n')[0].decode('ascii')
+            content_list = content.split('|')
+            if packet_type == 0:
+                if packet_mode == 0:
+                    return {
+                        'mode': 'derivative',
+                        'function': content_list[0],
+                        'order': content_list[1:]
+                    }
+                elif packet_mode == 1:
+                    return {
+                        'mode': 'def_integral',
+                        'variables': [content_list[1]],
+                        'function': content_list[0],
+                        'interval': tuple(content_list[2].split(' '))
+                    }
+                elif packet_mode == 2:
+                    return {
+                        'mode': 'indef_integral',
+                        'variables': [content_list[1]],
+                        'function': content_list[0]
+                    }
+                elif packet_mode == 3:
+                    return {
+                        'mode': 'simplify',
+                        'expression': content_list[0]
+                    }
+            elif packet_type == 1:
+                # sor - success or error
+                sor = str()
+                if packet_success == 0:
+                    sor = 'success'
+                elif packet_success == 1:
+                    sor = 'error'
+                else:
+                    raise ValueError('Unacceptable package')
+                if packet_mode == 0:
+                    return {
+                        'type': sor,
+                        'mode': 'derivative',
+                        'result': content
+                    }
+                elif packet_mode == 1:
+                    return {
+                        'type': sor,
+                        'mode': 'def_integral',
+                        'result': content
+                    }
+                elif packet_mode == 2:
+                    return {
+                        'type': sor,
+                        'mode': 'indef_integral',
+                        'result': content
+                    }
+                elif packet_mode == 3:
+                    return {
+                        'type': sor,
+                        'mode': 'simplify',
+                        'result': content
+                    }
+            elif packet_type == 2:
+                if packet_mode == 0:
+                    return {
+                        'type': 'progress',
+                        'mode': 'derivative',
+                        'result': content
+                    }
+                elif packet_mode == 1:
+                    return {
+                        'type': 'progress',
+                        'mode': 'def_integral',
+                        'result': content
+                    }
+                elif packet_mode == 2:
+                    return {
+                        'type': 'progress',
+                        'mode': 'indef_integral',
+                        'result': content
+                    }
+                elif packet_mode == 3:
+                    return {
+                        'type': 'progress',
+                        'mode': 'simplify',
+                        'result': content
+                    }
+            elif packet_type == 3:
+                if packet_mode != 4:
+                    raise ValueError('Unacceptable package')
+                return {
+                    'type': 'login',
+                    'nickname': content_list[0],
+                    'password': packet[2:].split(b'\r\n\r\n')[0].split(b'|')[1]
+                    # didn't take password from content_list so that password is bytes
+                }
+            elif packet_type == 4:
+                if packet_mode != 4:
+                    raise ValueError('Unacceptable package')
+                if packet_success == 0:
+                    return {
+                        'type': 'login_success'
+                    }
+                elif packet_success == 1:
+                    return {
+                        'type': 'login_error',
+                        'result': content
+                    }
+            elif packet_type == 5:
+                if packet_mode != 4:
+                    raise ValueError('Unacceptable package')
+                return {
+                    'type': 'registration',
+                    'nickname': content_list[0],
+                    'password': packet[2:].split(b'\r\n\r\n')[0].split(b'|')[1]
+                    # didn't take password from content_list so that password is bytes
+                }
+            elif packet_type == 6:
+                if packet_mode != 4:
+                    raise ValueError('Unacceptable package')
+                if packet_success == 0:
+                    return {
+                        'type': 'registration_success'
+                    }
+                elif packet_success == 1:
+                    return {
+                        'type': 'registration_error',
+                        'result': content
+                    }
         else:
-            return dict()
+            raise ValueError("Wrong protocol version")
 
     def encode(self, data: dict) -> bytes:
         """
@@ -144,6 +276,7 @@ class CATP:
                 packet_mode = 3
             else:
                 raise ValueError("Unknown mode")
+            content = str()
             if packet_type == 0:
                 if packet_mode == 0:
                     # deleting all the spaces for more compact placing

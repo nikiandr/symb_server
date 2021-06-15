@@ -13,7 +13,7 @@ def catp_mess_get(client):
         message += chunk
         if b'\r\n\r\n' in message:
             break
-    message = message.split(b'\r\n\r\n')[0]
+    message = message.split(b'\r\n\r\n')[0] + b'\r\n\r\n'
     return message
 
 
