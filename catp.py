@@ -1,3 +1,25 @@
+import socket
+
+
+def catp_mess_get(client: socket.socket) -> bytes:
+    """
+    Function for CATP messages receiving by socket library using TCP
+    Args:
+        client: socket object of connection from where you receive packet
+
+    Returns:
+        CATP packet in form of bytes object
+    """
+    message = bytes()
+    while True:
+        chunk = client.recv(128)
+        if not chunk:
+            raise ConnectionError
+        message += chunk
+        if b'\r\n\r\n' in message:
+            break
+    message = message.split(b'\r\n\r\n')[0] + b'\r\n\r\n'
+    return message
 
 
 class CATP:
@@ -12,7 +34,7 @@ class CATP:
     Attributes:
         version: version of protocol
     """
-    def __init__(self, version: str = '0.0.1'):
+    def __init__(self, version: str = '0.0.2'):
         self.version = version
 
     def decode(self, packet: bytes) -> dict:
@@ -406,7 +428,7 @@ class CATP:
                     content = sep.join(data['history']).encode('ascii')
                 else:
                     content = data['history'].encode('ascii')
-            res = bytes([packet_type, packet_mode, packet_success]) + content
+            res = bytes([packet_type, packet_mode, packet_success]) + content + b'\r\n\r\n'
             return res
         else:
             raise ValueError('Wrong protocol version')

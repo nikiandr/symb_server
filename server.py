@@ -6,20 +6,9 @@ import threading as td
 import time
 
 
-def catp_mess_get(client):
-    message = bytes()
-    while True:
-        chunk = client.recv(128)
-        message += chunk
-        if b'\r\n\r\n' in message:
-            break
-    message = message.split(b'\r\n\r\n')[0] + b'\r\n\r\n'
-    return message
-
-
 def process_messages(client):
     while True:
-        data = client.recv(260)
+        data = cp.catp_mess_get(client)
         if not data:
             break
         print(f"Message received: {data}")
