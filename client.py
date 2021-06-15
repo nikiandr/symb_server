@@ -64,7 +64,7 @@ if __name__ == '__main__':
             cl.server.sendall(ec.encode(req_data))
             wait_for_result = True
             while wait_for_result:
-                result = ec.decode(cl.server.recv(260))
+                result = ec.decode(cp.catp_mess_get(cl.server))
                 if not result:
                     break
                 elif result['type'] == 'success' or result['type'] == 'error':
