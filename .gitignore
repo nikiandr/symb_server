@@ -2,3 +2,4 @@
 __pycache__/sym_wrapper.cpython-38.pyc
 /start.sh
 /venv/
+/main.db
