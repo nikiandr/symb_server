@@ -116,7 +116,7 @@ class CATP:
             packet_mode = packet[1]
             packet_success = packet[2]
             # split - to get rid of end delimiter and everything after it
-            content = packet[2:].split(b'\r\n\r\n')[0].decode('ascii')
+            content = packet[3:].split(b'\r\n\r\n')[0].decode('ascii')
             content_list = content.split('|')
             if packet_type == 0:
                 if packet_mode == 0:
@@ -206,8 +206,8 @@ class CATP:
                     raise ValueError('Unacceptable package')
                 return {
                     'type': 'login',
-                    'nickname': content_list[0],
-                    'password': packet[2:].split(b'\r\n\r\n')[0].split(b'|')[1]
+                    'nickname': packet[3:].split(b'\r\n\r\n')[0].split(b'\r\n')[0].decode("ascii"),
+                    'password': packet[3:].split(b'\r\n\r\n')[0].split(b'\r\n')[1]
                     # didn't take password from content_list so that password is bytes
                 }
             elif packet_type == 4:
@@ -227,8 +227,8 @@ class CATP:
                     raise ValueError('Unacceptable package')
                 return {
                     'type': 'registration',
-                    'nickname': content_list[0],
-                    'password': packet[2:].split(b'\r\n\r\n')[0].split(b'|')[1]
+                    'nickname': packet[3:].split(b'\r\n\r\n')[0].split(b'\r\n')[0].decode('ascii'),
+                    'password': packet[3:].split(b'\r\n\r\n')[0].split(b'\r\n')[1]
                     # didn't take password from content_list so that password is bytes
                 }
             elif packet_type == 6:
@@ -241,6 +241,21 @@ class CATP:
                 elif packet_success == 1:
                     return {
                         'type': 'registration_error',
+                        'result': content
+                    }
+            elif packet_type == 7:
+                return {
+                    'type': 'history_request'
+                }
+            elif packet_type == 8:
+                if packet_success == 0:
+                    return {
+                        'type': 'history_response',
+                        'history': content.split('\r\n')
+                    }
+                elif packet_success == 1:
+                    return {
+                        'type': 'history_error',
                         'result': content
                     }
         else:
@@ -303,8 +318,108 @@ class CATP:
             is_error = 0
             if packet_type == 1 and data['type'] == 'error':
                 is_error = 1
-            packet = bytes([packet_type, content_len,
-                            packet_mode, is_error]) + content
-            return packet
+            res = bytes([packet_type, content_len,
+                         packet_mode, is_error]) + content
+            return res
+        elif self.version == '0.0.2':
+            # resolving packet type
+            if 'type' not in data:
+                packet_type = 0
+            else:
+                if data['type'] == 'error' or data['type'] == 'success':
+                    # response to computation request
+                    packet_type = 1
+                elif data['type'] == 'progress':
+                    packet_type = 2
+                elif data['type'] == 'login':
+                    packet_type = 3
+                elif data['type'] == 'login_success' or data['type'] == 'login_error':
+                    packet_type = 4
+                elif data['type'] == 'registration':
+                    packet_type = 5
+                elif data['type'] == 'registration_success' or data['type'] == 'registration_error':
+                    packet_type = 6
+                elif data['type'] == 'history_request':
+                    packet_type = 7
+                elif data['type'] == 'history_success' or data['type'] == 'history_error':
+                    packet_type = 8
+                else:
+                    raise ValueError("Unacceptable dictionary")
+            # resolving packet mode
+            if 'mode' not in data:
+                packet_mode = 4
+            else:
+                if data['mode'] == 'derivative':
+                    packet_mode = 0
+                elif data['mode'] == 'def_integral':
+                    packet_mode = 1
+                elif data['mode'] == 'indef_integral':
+                    packet_mode = 2
+                elif data['mode'] == 'simplify':
+                    packet_mode = 3
+                else:
+                    raise ValueError('Unacceptable dictionary')
+            # resolving packet success
+            if packet_type in (0, 2, 3, 5, 7):
+                packet_success = 0
+            else:
+                if 'success' in data['type']:
+                    packet_success = 0
+                elif 'error' in data['type']:
+                    packet_success = 1
+                else:
+                    raise ValueError('Unacceptable dictionary')
+            # constructing packet content
+            content = str()
+            if packet_type == 0:
+                if packet_mode == 0:
+                    # deleting all the spaces for more compact placing
+                    content = data['function'].replace(" ", "")
+                    # using vertical bar symbols as delimiters in packet
+                    for var in data['order']:
+                        content = content + '|' + var.replace(" ", "")
+                elif packet_mode == 1:
+                    content = data['function'].replace(" ", "") + '|' \
+                              + data['variables'][0].replace(" ", "") + '|' \
+                              + data['interval'][0].replace(" ", "") + ' ' \
+                              + data['interval'][1].replace(" ", "")
+                elif packet_mode == 2:
+                    content = data['function'].replace(" ", "") + '|' \
+                              + data['variables'][0].replace(" ", "")
+                elif packet_mode == 3:
+                    content = data['expression'].replace(" ", "")
+                content = content.encode('ascii')
+            elif packet_type in (1, 2):
+                content = data['result'].strip().encode('ascii')
+            elif packet_type in (3, 5):
+                content = data["nickname"].encode("ascii") + b'\r\n' + data["password"]
+            elif packet_type in (4, 6):
+                if packet_success == 0:
+                    content = b''
+                else:
+                    content = data['result'].encode('ascii')
+            elif packet_type == 7:
+                content = b''
+            elif packet_type == 8:
+                if packet_success == 0:
+                    sep = '\r\n'
+                    content = sep.join(data['history']).encode('ascii')
+                else:
+                    content = data['history'].encode('ascii')
+            res = bytes([packet_type, packet_mode, packet_success]) + content
+            return res
         else:
-            return bytes([0] * 4)
+            raise ValueError('Wrong protocol version')
+
+
+if __name__ == "__main__":
+    cp = CATP(version='0.0.2')
+    data = {
+        'type': 'history_error',
+        'history': "AAAAAA BLYATB AAAAAA"
+    }
+    print(data)
+    packet = cp.encode(data)
+    print(packet)
+    data = cp.decode(packet)
+    print(data)

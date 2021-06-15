@@ -5,21 +5,21 @@
     'function': 'x**2',
     'order': ['x']  # 'order': ['x', 'x']
 }
-b'\x00\x06\x00\x00x**2|x'
+b'\x00\x00\x00x**2|x'
 
 {
     'mode': 'derivative',
     'function': 'x**2 + y**2 + z**2',
     'order': ['x', 'x', 'y', 'z']  # d^4 f / d^2 x dy dz
 }
-b'\x00\x16\x00\x00x**2+y**2+z**2|x|x|y|z'
+b'\x00\x00\x00x**2+y**2+z**2|x|x|y|z'
 
 {
     'mode': 'indef_integral',
     'variables': ['x'],
     'function': 'x**2'
 }
-b'\x00\x06\x02\x00x**2|x'
+b'\x00\x02\x00x**2|x'
 
 {
     'mode': 'def_integral',
@@ -27,13 +27,13 @@ b'\x00\x06\x02\x00x**2|x'
     'function': 'x**2',
     'interval': ('0', '1')
 }
-b'\x00\n\x01\x00x**2|x|0 1'
+b'\x00\x01\x00x**2|x|0 1'
 
 {
     'mode': 'simplify',
     'expression': 'sin(x)**2 + cos(x)**2 + sin(y)**2 + cos(y)**2'
 }
-b"\x00'\x03\x00sin(x)**2+cos(x)**2+sin(y)**2+cos(y)**2"
+b'\x00\x03\x00sin(x)**2+cos(x)**2+sin(y)**2+cos(y)**2'
 
 # Types of response
 
@@ -42,14 +42,14 @@ b"\x00'\x03\x00sin(x)**2+cos(x)**2+sin(y)**2+cos(y)**2"
     'mode': 'simplify',  # or any other mode from request
     'result': 'Some shitty error'
 }
-b'\x01\x11\x03\x01Some shitty error'
+b'\x01\x03\x01Some shitty error'
 
 {
     'type': 'success',
     'mode': 'simplify',  # or any other mode from request
     'result': '2'
 }
-b'\x01\x01\x03\x002'
+b'\x01\x03\x002'
 
 # Types of progress message
 
@@ -58,7 +58,7 @@ b'\x01\x01\x03\x002'
     'mode': 'simplify',
     'result': 'Progress 90/100'
 }
-b'\x02\x0f\x03\x00Progress 90/100'
+b'\x02\x03\x00Progress 90/100'
 
 # Type of login request
 
@@ -67,18 +67,20 @@ b'\x02\x0f\x03\x00Progress 90/100'
     'nickname': 'nikiandr',
     'password': b'XKw0kd02ubg89f4f093' # password hashed using bcrypt
 }
+b'\x03\x04\x00nikiandr\r\nXKw0kd02ubg89f4f093'
 
 # Type of login response
 
 {
     'type': 'login_success'
 }
+b'\x04\x04\x00'
 
 {
     'type': 'login_error',
     'result': 'Wrong login or password'
 }
-
+b'\x04\x04\x01Wrong login or password'
 # Type of registration request
 
 {
@@ -86,28 +88,34 @@ b'\x02\x0f\x03\x00Progress 90/100'
     'nickname': 'nikiandr',
     'password': b'XKw0kd02ubg89f4f093' # password hashed using bcrypt
 }
-
+b'\x05\x04\x00nikiandr\r\nXKw0kd02ubg89f4f093'
 # Type of registration response
 
 {
     'type': 'registration_success'
 }
-
+b'\x06\x04\x00'
 {
     'type': 'registration_error',
     'result': 'User with this nickname already exists'
 }
-
+b'\x06\x04\x01User with this nickname already exists'
 # History request
 
 {
     'type': 'history_request'
 }
-
+b'\x07\x04\x00'
 # History response
 
 {
-    'type': 'history_response',
+    'type': 'history_success',
     'history': ['Mode: def_integral\n Input: x**2 \n Result: 1/3',
                 'Mode: derivative\n Input: x**2 \n Result: 2*x']
 }
+b'\x08\x04\x00Mode: def_integral\n Input: x**2 \n Result: 1/3\r\nMode: derivative\n Input: x**2 \n Result: 2*x'
+{
+    'type': 'history_error',
+    'history': "AAAAAA BLYATB AAAAAA"
+}
+b'\x08\x04\x01AAAAAA BLYATB AAAAAA'
