@@ -1,5 +1,8 @@
 import socket
 import catp as cp
+import bcrypt
+
+SALT: bytes = b'$2b$12$e9dmCi7tr6kLItHx7HPCte'
 
 
 class SymClient:
@@ -22,7 +25,67 @@ if __name__ == '__main__':
     cl = SymClient("localhost", 8888)
     cl.start()
     ec = cp.CATP()
+    isanon = str()
     try:
+        while True:
+            print("Do you want to use SymbServer anonymously? [Y/n]: ", end='')
+            isanon = str(input()).lower()
+            if isanon in ('y', 'n'):
+                break
+            else:
+                print("Wrong symbol. Try again.")
+                continue
+        if isanon == 'n':
+            while True:
+                print("Do you already have an account? [Y/n]: ", end='')
+                isaccount = str(input()).lower()
+                if isaccount in ('y', 'n'):
+                    break
+                else:
+                    print("Wrong symbol. Try again.")
+                    continue
+            if isaccount == 'n':
+                print("Let's start with registering in SymbServer system.")
+                while True:
+                    print("Please enter your nickname: ", end='')
+                    nickname = str(input()).strip()
+                    print("Now enter your wanted password: ", end='')
+                    password = str(input()).strip()
+                    cl.server.sendall(ec.encode(
+                        {
+                            'type': 'registration',
+                            'nickname': nickname,
+                            'password': bcrypt.hashpw(password.encode('ascii'), SALT)
+                        }
+                    ))
+                    result = ec.decode(cp.catp_mess_get(cl.server))
+                    if result['type'] == 'registration_success':
+                        break
+                    elif result['type'] == 'registration_error':
+                        print("There was some kind of error with your request. "
+                              + result['result']+ " Let's try again.")
+                        continue
+            elif isaccount == 'y':
+                print("Let's start with logging in SymbServer system.")
+                while True:
+                    print("Please enter your nickname: ", end='')
+                    nickname = str(input()).strip()
+                    print("Now enter your wanted password: ", end='')
+                    password = str(input()).strip()
+                    cl.server.sendall(ec.encode(
+                        {
+                            'type': 'login',
+                            'nickname': nickname,
+                            'password': bcrypt.hashpw(password.encode('ascii'), SALT)
+                        }
+                    ))
+                    result = ec.decode(cp.catp_mess_get(cl.server))
+                    if result['type'] == 'login_success':
+                        break
+                    elif result['type'] == 'login_error':
+                        print("There was some kind of error with your request. "
+                              + result['result']+ " Let's try again.")
+                        continue
         while True:
             print("Enter type of command: ", end="")
             command_type = str(input())
@@ -71,4 +134,30 @@ if __name__ == '__main__':
                     wait_for_result = False
                 print(result['result'])
     except KeyboardInterrupt:
-        print("\nClient stopped")
+        try:
+            print("\nClient is about to stop.")
+            if isanon == 'n':
+                while True:
+                    print("Do you want to get your all-time usage history? [Y/n]: ", end='')
+                    ishistory = str(input()).lower().strip()
+                    if ishistory in ('y', 'n'):
+                        break
+                    else:
+                        print("Wrong symbol. Try again.")
+                        continue
+                if ishistory == 'y':
+                    cl.server.sendall(ec.encode(
+                        {
+                            'type': 'history_request'
+                        }
+                    ))
+                    history = ec.decode(cp.catp_mess_get(cl.server))
+                    if history['type'] == 'history_error':
+                        print("There was an error in getting your history. " + history['history'])
+                    else:
+                        for row in history['history']:
+                            print(row, end='\n\n')
+                else:
+                    print("Bye-bye. Have a nice day.")
+        except KeyboardInterrupt:
+            print("\nAll right, then. Keep your secrets.")
