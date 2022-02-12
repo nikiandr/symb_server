@@ -22,7 +22,7 @@ class SymClient:
 
 
 if __name__ == '__main__':
-    cl = SymClient("localhost", 50)
+    cl = SymClient("localhost", 8888)
     cl.start()
     ec = cp.CATP()
     isanon = str()
