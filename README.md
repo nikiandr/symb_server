@@ -50,7 +50,7 @@ Then you can run built container image using:
 ```bash
 docker run --name sserver -p <port>:50 -it symb_server:latest
 ```
-where <port> - port which you want to be used by SymbServer
+where *port* - port which you want to be used by SymbServer
  
 ## Usage guide
 
